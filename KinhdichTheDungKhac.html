@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Kinh Dịch Thể – Dụng by Nguyễn Hồng Quân</title>
+<style>
+  :root{
+    --bg:#000;
+    --gold:#ffd666;
+    --accent:#ffcc00;
+    --muted:#777;
+    --panel:#0b0b0b;
+  }
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--gold);font-family: "Helvetica Neue", Arial, sans-serif;}
+  .wrap{max-width:940px;margin:24px auto;padding:20px;}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  h1{margin:0;color:var(--accent);font-size:20px;letter-spacing:1px;}
+  p.lead{margin:6px 0 14px;color:var(--muted);font-size:13px;}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,204,0,0.08);padding:14px;border-radius:10px;}
+  label{display:block;text-align:left;color:var(--gold);font-weight:600;margin-top:10px;font-size:13px;}
+  input[type=number], input[type=text], select, textarea{
+    width:100%;box-sizing:border-box;padding:8px;border-radius:8px;border:1px solid rgba(255,204,0,0.12);
+    background:#070707;color:var(--gold);font-size:14px;margin-top:6px;
+  }
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .controls{display:flex;gap:8px;margin-top:10px;align-items:center;}
+  button{
+    background:linear-gradient(180deg,var(--accent),#ffb700);color:#111;border:none;padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer;
+  }
+  button.ghost{background:transparent;border:1px solid rgba(255,204,0,0.12);color:var(--gold);}
+  .result{margin-top:16px;padding:14px;border-radius:10px;border:1px solid rgba(255,204,0,0.08);background:rgba(255,255,255,0.01);}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .element-pill{padding:6px 10px;border-radius:18px;background:rgba(255,204,0,0.06);border:1px solid rgba(255,204,0,0.06);display:inline-block;}
+  .ring{width:160px;height:160px;border-radius:50%;position:relative;margin:12px auto;display:grid;place-items:center;}
+  .ring .el{position:absolute;width:60px;height:30px;display:grid;place-items:center;border-radius:6px;background:rgba(255,204,0,0.04);border:1px solid rgba(255,204,0,0.06);font-size:13px}
+  .el.kim{top:8px;left:50%;transform:translateX(-50%);} 
+  .el.moc{right:8px;top:50%;transform:translateY(-50%);} 
+  .el.thuy{left:8px;top:50%;transform:translateY(-50%);} 
+  .el.hoa{bottom:8px;left:50%;transform:translateX(-50%);} 
+  .el.tho{right:50%;transform:translateX(50%);bottom:12px;} 
+  footer{margin-top:18px;color:var(--muted);font-size:13px;border-top:1px solid rgba(255,204,0,0.03);padding-top:12px;display:flex;justify-content:space-between;align-items:center;}
+  ul.history{padding-left:18px;margin:8px 0 0;color:var(--muted);max-height:260px;overflow:auto;border-top:1px dashed rgba(255,204,0,0.03);padding-top:10px;}
+  .small{font-size:12px;color:var(--muted);}
+  .badge{display:inline-block;padding:6px 8px;border-radius:6px;background:rgba(255,204,0,0.04);border:1px solid rgba(255,204,0,0.06);font-weight:700}
+  .flex-between{display:flex;justify-content:space-between;align-items:center;gap:12px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Kinh Dịch Thể – Dụng</h1>
+        <p class="lead">Phiên bản: <span class="small">by Nguyễn Hồng Quân</span> — Mạng ngũ hành & điểm hóa nhanh</p>
+      </div>
+      <div class="small">
+        <div class="badge">0896.233.268</div>
+      </div>
+    </header>
+
+    <section class="card" aria-labelledby="input-title">
+      <h2 id="input-title" style="margin:0 0 6px;color:var(--accent)">Nhập dữ liệu quẻ</h2>
+
+      <div class="grid">
+        <div>
+          <label>Số / Seri (Thể) — người hỏi hoặc số thứ nhất</label>
+          <input id="num1" type="text" placeholder="VD: 2152998 hoặc 15" />
+        </div>
+        <div>
+          <label>Số / Seri (Dụng) — việc / đối tượng</label>
+          <input id="num2" type="text" placeholder="VD: 0711171 hoặc 24" />
+        </div>
+      </div>
+
+      <label>Mục đích hỏi (chọn hoặc nhập cụ thể)</label>
+      <select id="purposeSelect">
+        <option value="congviec">Công việc / Ứng tuyển</option>
+        <option value="tinhduyen">Tình duyên</option>
+        <option value="taichinh">Tài chính / Đầu tư</option>
+        <option value="muaxe">Mua xe</option>
+        <option value="muadat">Mua đất / Bất động sản</option>
+        <option value="suckhoe">Sức khỏe</option>
+        <option value="timdo">Tìm đồ / người</option>
+        <option value="khac">Khác (ghi rõ)</option>
+      </select>
+      <input id="purposeText" type="text" placeholder="(Tùy chọn) Mô tả cụ thể, ví dụ: 'apply vị trí A' hoặc 'mua xe ben' " />
+
+      <div class="controls">
+        <button onclick="runCalc()">Xem quẻ & tính điểm</button>
+        <button class="ghost" onclick="clearForm()">Làm mới</button>
+        <div style="margin-left:auto" class="small">Lưu trữ: <span id="storageNote">ON</span></div>
+      </div>
+    </section>
+
+    <section id="output" class="result" style="display:none;">
+      <div class="flex-between">
+        <div>
+          <div><strong>Thể:</strong> <span id="elmThe"></span> — <small id="sum1" class="small"></small></div>
+          <div><strong>Dụng:</strong> <span id="elmDung"></span> — <small id="sum2" class="small"></small></div>
+          <div style="margin-top:6px"><strong>Mục đích:</strong> <span id="elmPurpose"></span></div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:14px;color:var(--muted)">Quan hệ</div>
+          <div style="font-size:18px;font-weight:800;margin-top:6px" id="relationText"></div>
+        </div>
+      </div>
+
+      <div class="ring" aria-hidden="true">
+        <div class="el kim" id="elKim">Kim</div>
+        <div class="el moc" id="elMoc">Mộc</div>
+        <div class="el thuy" id="elThuy">Thủy</div>
+        <div class="el hoa" id="elHoa">Hỏa</div>
+        <div class="el tho" id="elTho">Thổ</div>
+      </div>
+
+      <div style="margin-top:6px">
+        <strong>Điểm:</strong> <span id="scoreLarge" style="font-size:20px;font-weight:800"></span>
+        <div id="scoreText" class="small" style="margin-top:6px;color:var(--muted)"></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <strong>Kết luận ngắn:</strong>
+        <div id="conclusion" style="margin-top:6px;color:var(--gold)"></div>
+      </div>
+
+      <div style="margin-top:12px;color:var(--muted);font-size:13px" id="detailBox"></div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h3 style="margin:0;color:var(--accent)">Lịch sử (10 lần gần nhất)</h3>
+      <ul id="history" class="history"></ul>
+      <div style="margin-top:10px" class="small">Lưu trên trình duyệt (localStorage). Để xóa lịch sử, mở console và chạy: localStorage.removeItem('kdthistory')</div>
+    </section>
+
+    <footer>
+      <div>🔮 <strong>Kinh Dịch Thể – Dụng</strong> — by <em>Nguyễn Hồng Quân</em></div>
+      <div>📞 Liên hệ tư vấn: <strong>0896.233.268</strong></div>
+    </footer>
+  </div>
+
+<script>
+/* --- Quy ước & dữ liệu --- */
+const ELEMENTS = ["Kim","Mộc","Thủy","Hỏa","Thổ"]; // index mapping 0..4
+// Sinh (generative): key -> value means key generates value
+const GENERATES = {"Kim":"Thủy","Thủy":"Mộc","Mộc":"Hỏa","Hỏa":"Thổ","Thổ":"Kim"};
+// Controls (killing): key -> value means key controls value (khắc)
+const CONTROLS = {"Kim":"Mộc","Mộc":"Thổ","Thổ":"Thủy","Thủy":"Hỏa","Hỏa":"Kim"};
+// Base points mapping for relation (Thể vs Dụng)
+const BASE_POINTS = {
+  "D->T": 9,   // Dụng sinh Thể
+  "T->D": 7,   // Thể sinh Dụng
+  "equal": 6,  // same element
+  "T_khac_D": 4, // Thể khắc Dụng
+  "D_khac_T": 3  // Dụng khắc Thể
+};
+// Purpose -> element mapping (can be extended)
+const PURPOSE_MAP = {
+  "congviec":"Mộc",
+  "tinhduyen":"Thủy",
+  "taichinh":"Kim",
+  "muaxe":"Hỏa",
+  "muadat":"Thổ",
+  "suckhoe":"Kim",
+  "timdo":"Thủy",
+  "khac": null
+};
+
+/* --- Utils --- */
+function sumDigitsOfString(s){
+  // sum digits of given string, ignoring non-digits
+  let sum = 0;
+  for(let ch of String(s)) {
+    if(/\d/.test(ch)) sum += Number(ch);
+  }
+  return sum;
+}
+function elementFromNumberRaw(num){
+  // given arbitrary number or numeric string: sum digits -> mod 5 -> map
+  let total = sumDigitsOfString(num);
+  return { total: total, element: ELEMENTS[ total % 5 ] };
+}
+function countSpecialDigits(s){
+  // returns object counts of favorable/unfavorable digits
+  let good = 0, bad = 0;
+  for(let ch of String(s)){
+    if(ch === '6' || ch === '8' || ch === '9') good++;
+    if(ch === '0' || ch === '4' || ch === '7') bad++;
+  }
+  return {good, bad};
+}
+function capitalize(s){ return String(s).charAt(0).toUpperCase()+String(s).slice(1); }
+
+/* --- Core calculation --- */
+function analyze(num1, num2, purposeKey, purposeText){
+  // derive element and sums
+  const a = elementFromNumberRaw(num1);
+  const b = elementFromNumberRaw(num2);
+
+  // relation
+  let relation = "equal";
+  let points = BASE_POINTS["equal"];
+  // Thể = a.element, Dụng = b.element
+  const T = a.element;
+  const D = b.element;
+
+  if(GENERATES[D] === T){ relation = "D->T"; points = BASE_POINTS["D->T"]; }
+  else if(GENERATES[T] === D){ relation = "T->D"; points = BASE_POINTS["T->D"]; }
+  else if(CONTROLS[T] === D){ relation = "T_khac_D"; points = BASE_POINTS["T_khac_D"]; }
+  else if(CONTROLS[D] === T){ relation = "D_khac_T"; points = BASE_POINTS["D_khac_T"]; }
+
+  // detail tally & bonus
+  let detail = [];
+  detail.push(`Thể (${T}) — Dụng (${D}). Quan hệ cơ bản: ${relation.replace(/_/g,' ')}.`);
+
+  // base sums
+  let totalBonus = 0;
+
+  // thresholds bonuses
+  if(a.total > 50) { totalBonus += 2; detail.push("Thể: tổng chữ số lớn (>50) → +2 điểm năng lượng."); }
+  else if(a.total > 30) { totalBonus += 1; detail.push("Thể: tổng chữ số >30 → +1."); }
+  if(b.total > 50) { totalBonus += 2; detail.push("Dụng: tổng chữ số lớn (>50) → +2 điểm năng lượng."); }
+  else if(b.total > 30) { totalBonus += 1; detail.push("Dụng: tổng chữ số >30 → +1."); }
+
+  // special digit counts
+  const s1 = countSpecialDigits(num1);
+  const s2 = countSpecialDigits(num2);
+  if(s1.good + s2.good >= 2){ totalBonus += 1; detail.push("Xuất hiện nhiều chữ số cát (6/8/9) → +1."); }
+  if(s1.bad + s2.bad >= 2){ totalBonus -= 1; detail.push("Xuất hiện nhiều chữ số hung (0/4/7) → -1."); }
+
+  // if both elements same -> small bonus for harmony
+  if(T === D){ totalBonus += 1; detail.push("Thể và Dụng cùng hành → tương hòa → +1."); }
+
+  // purpose adjustments: map purpose to element and adjust
+  let purposeElement = null;
+  if(purposeKey && PURPOSE_MAP.hasOwnProperty(purposeKey)) purposeElement = PURPOSE_MAP[purposeKey];
+  if(!purposeElement && purposeText && purposeText.trim().length){
+    // try to guess from keywords (basic)
+    const txt = purposeText.toLowerCase();
+    if(/xe|nhà|bất động sản|đất/.test(txt)) purposeElement = "Thổ";
+    else if(/đầu tư|tiền|lợi|tài|vốn/.test(txt)) purposeElement = "Kim";
+    else if(/tình|yêu|hẹn|yêu đương/.test(txt)) purposeElement = "Thủy";
+    else if(/thi|thi cử|thi tuyển/.test(txt)) purposeElement = "Hỏa";
+    else if(/sức|khỏi|khỏe/.test(txt)) purposeElement = "Kim";
+    else if(/việc|job|apply|công việc/.test(txt)) purposeElement = "Mộc";
+  }
+  if(purposeElement){
+    detail.push(`Mục đích thuộc hành: ${purposeElement}.`);
+    // if purpose supports the D (i.e., purpose == D or purpose generates D) => +1
+    if(purposeElement === D){ totalBonus += 1; detail.push("Mục đích trùng Dụng → +1."); }
+    else if(GENERATES[purposeElement] === D){ totalBonus += 1; detail.push("Mục đích sinh Dụng → +1."); }
+    // if purpose khắc D -> -1
+    else if(CONTROLS[purposeElement] === D){ totalBonus -= 1; detail.push("Mục đích khắc Dụng → -1."); }
+    // if purpose sinh T => tăng khả năng tốt cho Thể
+    if(GENERATES[purposeElement] === T){ totalBonus += 0; /*neutral small effect*/ }
+  } else {
+    detail.push("Mục đích chưa xác định hành chính xác.");
+  }
+
+  // final compute
+  let finalScore = points + totalBonus;
+  // optionally cap minimum 0
+  if(finalScore < 0) finalScore = 0;
+
+  // textual verdict
+  let verdict = "";
+  if(finalScore <= 3) verdict = "Tránh tiến hành – Hung (không thuận).";
+  else if(finalScore <= 5) verdict = "Không thuận – Nên thận trọng, đợi thời.";
+  else if(finalScore <= 7) verdict = "Tạm ổn – Có thể tiến hành nhưng chú ý quản trị rủi ro.";
+  else if(finalScore <= 9) verdict = "Cát – Nên tiến hành, có lợi.";
+  else verdict = "Rất cát (thiên ý mạnh) — Ưu tiên tiến hành.";
+
+  // summary & full details
+  return {
+    the: T, dung: D, sum1: a.total, sum2: b.total,
+    basePoints: points, bonus: totalBonus, score: finalScore,
+    verdict: verdict, detailLines: detail, relation: relation, purposeElement: purposeElement
+  };
+}
+
+/* --- UI glue --- */
+function runCalc(){
+  const n1 = document.getElementById('num1').value.trim();
+  const n2 = document.getElementById('num2').value.trim();
+  const purposeKey = document.getElementById('purposeSelect').value;
+  const purposeText = document.getElementById('purposeText').value.trim();
+
+  if(!n1 || !n2){ alert('Vui lòng nhập cả hai số/seri.'); return; }
+
+  const res = analyze(n1, n2, purposeKey, purposeText);
+
+  // update UI
+  document.getElementById('output').style.display = 'block';
+  document.getElementById('elmThe').textContent = `${res.the}`;
+  document.getElementById('elmDung').textContent = `${res.dung}`;
+  document.getElementById('sum1').textContent = `Tổng chữ số: ${res.sum1}`;
+  document.getElementById('sum2').textContent = `Tổng chữ số: ${res.sum2}`;
+  document.getElementById('elmPurpose').textContent = (res.purposeElement ? `${res.purposeElement}` : (purposeText || document.getElementById('purposeSelect').selectedOptions[0].text));
+  document.getElementById('relationText').textContent = res.relation.replace(/_/g,' ');
+  document.getElementById('scoreLarge').textContent = `${res.score}/10`;
+  document.getElementById('scoreText').textContent = res.verdict;
+  document.getElementById('conclusion').textContent = res.verdict;
+  document.getElementById('detailBox').innerHTML = res.detailLines.map(s => `<div class="small">- ${s}</div>`).join('');
+
+  // highlight elements on ring
+  highlightElements(res.the, res.dung, res.purposeElement);
+
+  // store history
+  storeHistory({
+    time: new Date().toLocaleString(),
+    n1, n2,
+    the: res.the,
+    dung: res.dung,
+    score: res.score,
+    verdict: res.verdict,
+    purpose: purposeText || document.getElementById('purposeSelect').selectedOptions[0].text
+  });
+  renderHistory();
+}
+
+function highlightElements(the, dung, purpose){
+  // reset
+  ['elKim','elMoc','elThuy','elHoa','elTho'].forEach(id=>{
+    const el = document.getElementById(id);
+    el.style.background = "rgba(255,204,0,0.04)";
+    el.style.border = "1px solid rgba(255,204,0,0.06)";
+    el.style.color = "var(--gold)";
+  });
+  const mapId = { "Kim":"elKim","Mộc":"elMoc","Thủy":"elThuy","Hỏa":"elHoa","Thổ":"elTho" };
+  if(mapId[the]) {
+    const el = document.getElementById(mapId[the]);
+    el.style.background = "linear-gradient(90deg, rgba(255,204,0,0.12), rgba(255,180,0,0.06))";
+    el.style.border = "1px solid rgba(255,204,0,0.2)";
+    el.style.color = "#fff";
+  }
+  if(mapId[dung]) {
+    const el = document.getElementById(mapId[dung]);
+    el.style.background = "linear-gradient(90deg, rgba(0,200,255,0.06), rgba(255,204,0,0.06))";
+    el.style.border = "1px solid rgba(255,204,0,0.2)";
+    el.style.color = "#fff";
+  }
+  if(purpose && mapId[purpose]){
+    const el = document.getElementById(mapId[purpose]);
+    el.style.background = "linear-gradient(90deg, rgba(0,255,150,0.06), rgba(255,204,0,0.06))";
+    el.style.border = "1px solid rgba(255,204,0,0.2)";
+    el.style.color = "#fff";
+  }
+}
+
+/* --- LocalStorage history --- */
+function storeHistory(record){
+  try{
+    let hist = JSON.parse(localStorage.getItem('kdthistory') || '[]');
+    hist.unshift(record);
+    if(hist.length>10) hist.pop();
+    localStorage.setItem('kdthistory', JSON.stringify(hist));
+  }catch(e){ console.warn(e); }
+}
+function renderHistory(){
+  const ul = document.getElementById('history');
+  let hist = JSON.parse(localStorage.getItem('kdthistory') || '[]');
+  if(hist.length === 0){ ul.innerHTML = "<li class='small'>Chưa có lịch sử</li>"; return; }
+  ul.innerHTML = hist.map(h => `<li><strong>${h.time}</strong>: [${h.n1}] → ${h.the}  |  [${h.n2}] → ${h.dung} — <em>${h.score}/10</em> — <span class="small">${h.purpose}</span></li>`).join('');
+}
+function clearForm(){
+  document.getElementById('num1').value='';
+  document.getElementById('num2').value='';
+  document.getElementById('purposeText').value='';
+  document.getElementById('purposeSelect').value='congviec';
+  document.getElementById('output').style.display='none';
+}
+
+/* boot */
+renderHistory();
+
+</script>
+</body>
+</html>
